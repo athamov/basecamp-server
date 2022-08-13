@@ -22,7 +22,7 @@ app.use(errorMiddleware);
 const start = async () => {
   try {
     await mongoose.connect(process.env.DB_URL,{ 
-      useNewUrlParser: true
+      useNewUrlParser: true 
     })    
     app.listen(PORT,console.log("server has been started in ",PORT));
     console.log("mongodb status: " + mongoose.connection.readyState);

@@ -10,7 +10,7 @@ class ProjectController {
       const token = await tokenService.findToken(refreshToken);
       const projectData = await projectService.createProject( token.user, project_name, project_description );
 
-      return res.json(projectData);
+      return res.status(200).json(projectData);
     }
     catch(err) {
       console.log(err);
@@ -22,9 +22,11 @@ class ProjectController {
     try{
       const { refreshToken } = req.cookies;
       const token = await tokenService.findToken(refreshToken);
+      if(!token) {
+        return res.status(200).send('project not found');
+      }
       const AllProjects = await projectService.getAllProject(token.user);
-
-      return res.json(AllProjects);
+      return res.status(200).json(AllProjects);
     }
     catch(err) {
       console.log(err);
@@ -33,21 +35,27 @@ class ProjectController {
   }
 
   async getProject(req, res, next) {
-    const { refreshToken } = req.cookies;
+    const { refreshToken } = req.cookies; 
     const { id } = req.params;
-    console.log(id);
+    if(!refreshToken || !id) {
+      res.status(400).send('something went wrong')
+    }
     const token = await tokenService.findToken(refreshToken);
+    if(!token) {
+      return res.status(200).send('projects not found');
+
+    }
     const permission = await projectService.checkPermission(id, token.user,'r');
     if(!permission) {
-      res.send('you are not allowed this action');
+      return res.status(403).send('you are not allowed this action');
     }
     const project = await projectService.findProject(id);
 
     if(!project) {
-      res.status(404).send("project not found");
+      return res.status(404).send("project not found");
     }
 
-    return res.json(project)
+    return res.status(200).json(project)
   }
 
   async postProject(req, res, next) {
@@ -72,7 +80,7 @@ class ProjectController {
       if(!updatedProject) {
         res.send("something went wrong! Check your requests and try again");
       }
-      return res.json(updatedProject);
+      return res.status(200).send('updated succesfully');
     }
     catch(err){
       console.log(err);
@@ -85,14 +93,13 @@ class ProjectController {
       const { id } = req.params;
 
       const token = await tokenService.findToken(refreshToken);
-      console.log(id);
       const permission = await projectService.checkPermission(id, token.user,'d');
       if(!permission) {
         res.send('you are not allowed this action');
       }
       const project = await projectService.deleteProject(id);
       await memberService.deleteAllMembers(id);
-      return res.json(project);
+      return res.status(200).send('project deleted successfully');
     }
     catch(err) {
       console.log(err);
@@ -112,7 +119,7 @@ class ProjectController {
       } 
       const memberData = await memberService.newMember(user_email, id, role, request)
 
-      return res.json(memberData);
+      return res.status(200).send('member added successfully');
     }
     catch(err) {
       console.error(err);
@@ -126,7 +133,7 @@ class ProjectController {
 
       const membersData = await memberService.projectMembership(id);
 
-      return res.json(membersData);
+      return res.status(200).json(membersData);
     }
     catch(err) {
       console.error(err);
@@ -145,7 +152,7 @@ class ProjectController {
       }
       const memberData = await memberService.getUser(member_id);
 
-      return res.json(memberData);
+      return res.status(200).json(memberData);
     }
     catch(err) {
       console.error(err);
@@ -161,11 +168,11 @@ class ProjectController {
       const token = await tokenService.findToken(refreshToken);
       const permission = await projectService.checkPermission(id, token.user,'a');
       if(!permission) {
-        res.send('you are not allowed this action');
+        res.status(403).send('you are not allowed this action');
       }
-      const memberData = await memberService.updateMember(member_id, role, request);
+      await memberService.updateMember(member_id, role, request);
 
-      return res.json(memberData);
+      return res.status(200).json('updated successfully');
     }
     catch(err) {
       console.error(err);
@@ -180,11 +187,11 @@ class ProjectController {
       const token = await tokenService.findToken(refreshToken);
       const permission = await projectService.checkPermission(id, token.user,'a');
       if(!permission) {
-        res.send('you are not allowed this action');
+        res.status(403).send('you are not allowed this action');
       }
-      const memberData = await memberService.deleteMember(member_id);
+      await memberService.deleteMember(member_id);
 
-      return res.json(memberData);
+      return res.status(200).json('deleted successfully');
     }
     catch(err) {
       console.error(err);

@@ -67,7 +67,6 @@ class UserService {
   async login(email, password) {
     const user = await UserModel.findOne({email});
     if(!user) throw  Apierror.BadRequestError("user is not logged in!");
-    console.log(user);
 
     const isPassEqual = await bcrypt.compare(password, user.password);
     if(!isPassEqual) {
@@ -108,8 +107,8 @@ class UserService {
     return users;
   }
 
-  async getUser(email) {
-    const user = await UserModel.findOne({email});
+  async getUser(id) {
+    const user = await UserModel.findById(id);
     
     return {email:user.email,name:user.name,id:user.id};
   }

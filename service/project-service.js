@@ -16,7 +16,6 @@ class ProjectService {
 
   async getAllProject(user_id) {
     const joinedMember = await memberService.userMemberships(user_id);
-
     const projects_id =  joinedMember.map(member =>{
       if(member.Project != undefined) return member.Project
     })

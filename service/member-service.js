@@ -9,8 +9,8 @@ const adminRequest = {
 }
 
 class memberService{
-  async newMember(user_email, project_id, role, request) {
-    const user = await UserService.getUser(user_email);
+  async newMember(id, project_id, role, request) {
+    const user = await UserService.getUser(id);
 
     if(role == 'admin') {
       request = adminRequest
@@ -34,7 +34,6 @@ class memberService{
       users.push(user)
     }
     return users
-    
   }
 
   async getUser(member_id) {

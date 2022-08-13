@@ -86,7 +86,6 @@ class UserController {
       const {refreshToken} = req.cookies;
 
       const token = await tokenService.findToken(refreshToken);
-      console.log(token);
 
       const user = await userService.getUser(req.body.email)
       res.json(user)
@@ -99,7 +98,7 @@ class UserController {
   async update(req, res, next) {
     try {
       const {refreshToken} = req.cookies;
-      const { name, email, newPassword, oldPassword } =req.body;
+      const { name, email, newPassword, oldPassword } = req.body;
       const userData = await userService.updateUser(refreshToken,name,email,newPassword,oldPassword);
       res.cookie('refreshToken',userData.token.refreshToken,{maxAge:2592000000,httpOnly:true})
 
