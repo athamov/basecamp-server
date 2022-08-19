@@ -2,10 +2,6 @@ const memberService = require('./member-service');
 const ProjectModel = require('../models/project-model');
 const Apierror = require('../exceptions/api-error');
 
-const callback = (err, result) => {
-  if (err) {return err;}
-}
-
 class ProjectService {
   async createProject( id, project_name, project_description ) {
     const project = await ProjectModel.create({project_name: project_name, description: project_description});

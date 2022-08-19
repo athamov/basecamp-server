@@ -7,25 +7,33 @@ class ProjectController {
     try {
       const { refreshToken } = req.cookies
       const { project_name, project_description } = req.body;
-      const token = await tokenService.findToken(refreshToken);
-      const projectData = await projectService.createProject( token.user, project_name, project_description );
+      if(!refreshToken || !project_name || !project_description) return res.status(400).send('something went wrong');
 
-      return res.status(200).json(projectData);
+      const token = await tokenService.findToken(refreshToken);
+      if(!token) return res.status(401).send('unavthorized')
+
+      await projectService.createProject( token.user, project_name, project_description );
+
+      return res.status(201).send('created');
     }
     catch(err) {
       console.log(err);
-      res.json(err);
+      res.status(500).send(err).send('please try again or connect with us');
+      
     }
   }
 
   async getAllProject(req, res, next) {
     try{
       const { refreshToken } = req.cookies;
+      if(!refreshToken) return res.status(400).send('BadRequestError')
+
       const token = await tokenService.findToken(refreshToken);
-      if(!token) {
-        return res.status(200).send('project not found');
-      }
+      if(!token) return res.status(401).send('unavthorized');
+
       const AllProjects = await projectService.getAllProject(token.user);
+      if(!AllProjects) return res.status(204).send('projects not found');
+      
       return res.status(200).json(AllProjects);
     }
     catch(err) {
@@ -37,31 +45,19 @@ class ProjectController {
   async getProject(req, res, next) {
     const { refreshToken } = req.cookies; 
     const { id } = req.params;
-    if(!refreshToken || !id) {
-      res.status(400).send('something went wrong')
-    }
+    if(!refreshToken || !id) res.status(400).send('something went wrong')
     const token = await tokenService.findToken(refreshToken);
-    if(!token) {
-      return res.status(200).send('projects not found');
+    if(!token) return res.status(401).send('unavthorized')
 
-    }
     const permission = await projectService.checkPermission(id, token.user,'r');
-    if(!permission) {
-      return res.status(403).send('you are not allowed this action');
-    }
+    if(!permission) return res.status(403).send('you are not allowed this action');
     const project = await projectService.findProject(id);
 
     if(!project) {
-      return res.status(404).send("project not found");
+      return res.status(204).send("project not found");
     }
 
     return res.status(200).json(project)
-  }
-
-  async postProject(req, res, next) {
-    const { id } = req.params;
-    console.log(id);
-    next(id);
   }
 
   async updateProject(req, res, next) {
@@ -69,12 +65,17 @@ class ProjectController {
       const { refreshToken } = req.cookies;
       const { project_name, project_description } = req.body;
       const { id } = req.params;
+      if(!refreshToken || !project_name || !project_description || !id) return res.status(400).send('BadRequestError')
+
+      if(!refreshToken || !project_name || !project_description || !id) { 
+        return res.status(403).send('something went wrong')
+      }
 
       const token = await tokenService.findToken(refreshToken);
+      if(!token) return res.status(401).send('unavthorized')
       const permission = await projectService.checkPermission(id, token.user,'u');
-      if(!permission) {
-        res.send('you are not allowed this action');
-      }
+      if(!permission) return res.status(403).send('you are not allowed this action');
+
       const updatedProject = await projectService.updateProject(id, project_name, project_description);
 
       if(!updatedProject) {
@@ -91,12 +92,15 @@ class ProjectController {
     try{
       const { refreshToken } = req.cookies;
       const { id } = req.params;
+      if(!refreshToken || !id) return res.status(400).send('BadRequestError')
+
 
       const token = await tokenService.findToken(refreshToken);
+      if(!token) return res.status(401).send('unavthorized')
+
       const permission = await projectService.checkPermission(id, token.user,'d');
-      if(!permission) {
-        res.send('you are not allowed this action');
-      }
+      if(!permission) return res.status(403).send('you are not allowed this action');
+
       const project = await projectService.deleteProject(id);
       await memberService.deleteAllMembers(id);
       return res.status(200).send('project deleted successfully');
@@ -111,27 +115,38 @@ class ProjectController {
     try {
       const { refreshToken } = req.cookies;
       const { id } = req.params;
-      const { user_email , role, request } = req.body;
-      const token = await tokenService.findToken(refreshToken);
-      const permission = await projectService.checkPermission(id, token.user,'a');
-      if(!permission) {
-        res.send('you are not allowed this action'); 
-      } 
-      const memberData = await memberService.newMember(user_email, id, role, request)
+      const { email , role, request } = req.body;
+      if(!refreshToken || !email || !role || !request || !id) return res.status(400).send('BadRequestError')
 
-      return res.status(200).send('member added successfully');
+      const token = await tokenService.findToken(refreshToken);
+      if(!token) return res.status(401).send('unavthorized')
+
+      const permission = await projectService.checkPermission(id, token.user,'a');
+      if(!permission) return res.status(403).send('you are not allowed this action');
+
+      await memberService.newMember(email, id, role, request)
+
+      return res.status(201).send('member added successfully');
     }
     catch(err) {
       console.error(err);
-    }
+    } 
   }
 
   async getAllMebers(req, res, next) {
     try {
-      const { refreshToken } = req.cookies
-      const { id } = req.params
+      const { refreshToken } = req.cookies;
+      const { id } = req.params;
+      if(!refreshToken || !id) return res.status(400).send('BadRequestError')
+
+      const token = await tokenService.findToken(refreshToken);
+      if(!token) return res.status(401).send('unavthorized');
+
+      const permission = await projectService.checkPermission(id, token.user,'r');
+      if(!permission) return res.status(403).send('you are not allowed this action');
 
       const membersData = await memberService.projectMembership(id);
+      if(!membersData) return res.status(203).send('this project has not any member');
 
       return res.status(200).json(membersData);
     }
@@ -144,13 +159,16 @@ class ProjectController {
     try {
       const { refreshToken } = req.cookies
       const { id, member_id } = req.params
-
+      if(!refreshToken || !member_id || !id) return res.status(400).send('BadRequestError')
       const token = await tokenService.findToken(refreshToken);
+      if(!token) return res.status(401).send('unavthorized')
+
       const permission = await projectService.checkPermission(id, token.user,'a');
-      if(!permission) {
-        res.send('you are not allowed this action');
-      }
+      if(!permission) return res.status(403).send('you are not allowed this action');
+
       const memberData = await memberService.getUser(member_id);
+      console.log(memberData);
+      if(!memberData) return res.status(204).send('Member not found');
 
       return res.status(200).json(memberData);
     }
@@ -166,13 +184,14 @@ class ProjectController {
       const { role, request } = req.body;
 
       const token = await tokenService.findToken(refreshToken);
+      if(!token) return res.status(401).send('unavthorized')
+
       const permission = await projectService.checkPermission(id, token.user,'a');
-      if(!permission) {
-        res.status(403).send('you are not allowed this action');
-      }
+      if(!permission) return res.status(403).send('you are not allowed this action');
+
       await memberService.updateMember(member_id, role, request);
 
-      return res.status(200).json('updated successfully');
+      return res.status(200).send('updated successfully');
     }
     catch(err) {
       console.error(err);
@@ -185,13 +204,14 @@ class ProjectController {
       const { id, member_id } = req.params
 
       const token = await tokenService.findToken(refreshToken);
+      if(!token) return res.status(401).send('unavthorized')
+
       const permission = await projectService.checkPermission(id, token.user,'a');
-      if(!permission) {
-        res.status(403).send('you are not allowed this action');
-      }
+      if(!permission) return res.status(403).send('you are not allowed this action');
+
       await memberService.deleteMember(member_id);
 
-      return res.status(200).json('deleted successfully');
+      return res.status(200).send('deleted successfully');
     }
     catch(err) {
       console.error(err);

@@ -1,5 +1,6 @@
 const userService = require("../service/user-service");
 const {validationResult} = require('express-validator');
+const tokenService = require("../service/token-service");
 const ApiError = require('../exceptions/api-error');
 
 class UserController {
@@ -87,7 +88,7 @@ class UserController {
 
       const token = await tokenService.findToken(refreshToken);
 
-      const user = await userService.getUser(req.body.email)
+      const user = await userService.getUserById(token.User)
       res.json(user)
     }
     catch (err) {

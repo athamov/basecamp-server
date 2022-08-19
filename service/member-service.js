@@ -9,8 +9,8 @@ const adminRequest = {
 }
 
 class memberService{
-  async newMember(id, project_id, role, request) {
-    const user = await UserService.getUser(id);
+  async newMember(email, project_id, role, request) {
+    const user = await UserService.getUser(email);
 
     if(role == 'admin') {
       request = adminRequest
@@ -31,15 +31,25 @@ class memberService{
     let users = []
     for(let member of members) {
       let user = await UserService.getUserById(member.User);
-      users.push(user)
+      users.push({user: user,member:member})
     }
+    // members.map(async member=>{
+    //   let user = await UserService.getUserById(member.User);
+      // member = Object.assign(member, {user_name: user.name});
+      // let name = {name:user.name}
+      // member = {...member, ...name}
+      // console.log(member);
+    //   return {member:member,user:user};
+    // })
+    console.log(users)
     return users
   }
 
   async getUser(member_id) {
     const member = await MemberModel.findById(member_id);
+    if(!member) return ;
     const  user = await UserService.getUserById(member.User)
-    return user;
+    return {user:user,member:member};
   }
 
   async findMember(project_id, user_id) {
