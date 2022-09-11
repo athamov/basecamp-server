@@ -6,8 +6,8 @@ const cookieParser = require('cookie-parser');
 const expressUploader = require('express-fileupload')
 var multer = require('multer');
 var upload = multer();
-const router = require('../router/index.js');
-const errorMiddleware = require('../middleware/error-middleware.js')
+const router = require('./router/index.js');
+const errorMiddleware = require('./middleware/error-middleware.js')
 
 const PORT = process.env.SERVER_PORT || 7000
 const app = express();
