@@ -26,7 +26,7 @@ class ProjectController {
   async getAllProject(req, res, next) {
     try{
       const { refreshToken } = req.cookies;
-      if(!refreshToken) return res.status(400).send('BadRequestError')
+      if( !refreshToken ) return res.status(400).send('BadRequestError')
 
       const token = await tokenService.findToken(refreshToken);
       if(!token) return res.status(401).send('unavthorized');
