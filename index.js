@@ -9,7 +9,7 @@ var upload = multer();
 const router = require('./router/index.js');
 const errorMiddleware = require('./middleware/error-middleware.js')
 
-const PORT = process.env.SERVER_PORT || 7000
+const PORT = process.env.PORT || process.env.SERVER_PORT || 7000
 const app = express();
  
 app.use(express.json());  
