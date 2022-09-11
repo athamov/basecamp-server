@@ -1,7 +1,7 @@
 const projectService = require('../service/project-service');
 const tokenService = require('../service/token-service');
 const TaskService = require('../service/task-service');
-const SubtaskService = require('../service/subTask-service');
+const SubtaskService = require('../service/subtask-service');
 
 class TaskController {
   async create(req, res, next) {
