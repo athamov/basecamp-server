@@ -1,9 +1,12 @@
 const Router = require('express').Router
+const multer = require('multer');
+const upload = multer()
 const UserController = require('../controller/user-controller');
 const ProjectController = require('../controller/project-controller');
 const TaskController = require('../controller/task-controller');
 const ChatController = require('../controller/chat-controller');
 const fileController = require('../controller/file-controller')
+const UploadController = require('../controller/upload-controller')
 const {body} = require('express-validator');
 const authMiddleware = require('../middleware/auth-middleware')
 
@@ -59,7 +62,7 @@ router.post('/project',authMiddleware,ProjectController.create);
 router.get('/project/:id',authMiddleware,ProjectController.getProject);
 router.put('/project/:id',authMiddleware,ProjectController.updateProject);
 router.delete('/project/:id',authMiddleware,ProjectController.deleteProject);
-router.get('/all-project',authMiddleware,ProjectController.getAllProject);
+router.get('/project',authMiddleware,ProjectController.getAllProject);
 
 // * Member
 /** 
@@ -138,7 +141,7 @@ router.delete('/project/:id/task/:task_id', authMiddleware,TaskController.delete
 /** 
  * * Post Create
  * @param req.cookies = { refreshToken }
- * @param req.params = { id } project id
+ * @param req.params = { id,task_id } project id
  * @param req.body == { subtask:string } 
  * 
  * * Get All Tasks in that project
@@ -174,24 +177,24 @@ router.delete('/project/:id/subtask/:subtask_id', authMiddleware,TaskController.
  * * Post Create
  * @param req.cookies = { refreshToken }
  * @param req.params = { id } project id
- * @param req.body == { subtask:string } 
+ * @param req.body == { name:string } 
  * 
  * * Get All Chat in that project
  * @param req.cookies = { refreshToken }
- * @param req.params = { id, task_id } project id
+ * @param req.params = { id } project id
  * 
  * * Get chat 
  * @param req.cookies = { refreshToken }
- * @param req.params = { id, subtask_id } id is project id
+ * @param req.params = { id, chat_id } id is project id
  * 
  * * Put update chat
  * @param req.cookies = {refreshToken}
- * @param req.params = { id, subtask_id } id is project id
- * @param req.body = { subtask }
+ * @param req.params = { id, chat_id } id is project id
+ * @param req.body = { name }
  * 
  * * Delete delete chat
  * @param req.cookies = {refreshToken}
- * @param req.params = { id, subtask_id } id is project id
+ * @param req.params = { id, chat_id } id is project id
  * 
 */
 router.post('/project/:id/chat', authMiddleware, ChatController.create);
@@ -200,13 +203,40 @@ router.get('/project/:id/chat/:chat_id', authMiddleware, ChatController.find);
 router.put('/project/:id/chat/:chat_id', authMiddleware,ChatController.update);
 router.delete('/project/:id/chat/:chat_id', authMiddleware,ChatController.delete);
 
+/** 
+ * * Post Create
+ * @param req.cookies = { refreshToken }
+ * @param req.params = { chat_id ,id } project id
+ * @param req.body == { message:string } 
+ * 
+ * * Get All Chat in that project
+ * @param req.cookies = { refreshToken }
+ * @param req.params = { chat_id, id } project id
+ * 
+ * * Get chat 
+ * @param req.cookies = { refreshToken }
+ * @param req.params = { message_id,id } id is project id
+ * 
+ * * Put update chat
+ * @param req.cookies = {refreshToken}
+ * @param req.params = { message_id, id } id is project id
+ * @param req.body = { message:string }
+ * 
+ * * Delete delete chat
+ * @param req.cookies = {refreshToken}
+ * @param req.params = { message_id, id } id is project id
+ * 
+*/
 router.post('/project/:id/chat/:chat_id/message', authMiddleware, ChatController.addMessage);
 router.get('/project/:id/chat/:chat_id/message',authMiddleware, ChatController.getAllMessages);
 router.get('/project/:id/message/:message_id', authMiddleware, ChatController.findMessage);
 router.put('/project/:id/message/:message_id', authMiddleware,ChatController.updateSubtask);
 router.delete('/project/:id/message/:message_id', authMiddleware,ChatController.deleteMessage);
 
-router.post('/upload',fileController.postFile)
-router.get('/upload',fileController.getFIle);
+router.post('/project/:id/upload',authMiddleware,upload.any(),UploadController.create);
+router.get('/project/:id/upload',authMiddleware,UploadController.getAll);
+router.get('/project/:id/upload/:upload_id',UploadController.find);
+router.post('/project/:id/upload/:upload_id',authMiddleware,UploadController.create);
+router.delete('/project/:id/upload/:upload_id',authMiddleware,UploadController.delete);
 
 module.exports = router;

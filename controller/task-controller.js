@@ -8,13 +8,13 @@ class TaskController {
     try {
       const { refreshToken } = req.cookies;
       const { id } = req.params;
-      const { task_name } = req.body;
-      if(!refreshToken || !task_name || !id) return res.status(400).send('something went wrong');
+      const { task } = req.body;
+      if(!refreshToken || !task || !id) return res.status(400).send('something went wrong');
 
       const token = await tokenService.findToken(refreshToken);
       if(!token) return res.status(401).send('unavthorized')
 
-      await TaskService.create(id, task_name );
+      await TaskService.create(id, task );
 
       return res.status(201).send('created');
     }
@@ -47,7 +47,6 @@ class TaskController {
   async find(req, res, next) {
     const { refreshToken } = req.cookies; 
     const { id,task_id } = req.params;
-    console.log(id,task_id)
     if(!refreshToken || !id || !task_id) res.status(400).send('something went wrong');
     const token = await tokenService.findToken(refreshToken);
     if(!token) return res.status(401).send('unavthorized')
@@ -67,7 +66,7 @@ class TaskController {
     const { refreshToken } = req.cookies;
     const { id,task_id } = req.params;
     if(!refreshToken || !id || !task_id) return res.status(400).send('BadRequestError')
-    
+    // console.log("something");
     const token = await tokenService.findToken(refreshToken);
     if(!token) return res.status(401).send('unavthorized')
     const permission = await projectService.checkPermission(id, token.user,'u');
@@ -75,23 +74,23 @@ class TaskController {
 
     const task = await TaskService.changeIsDone(task_id);
     if(task=='err') res.send(500).send('something went wrong with is done function');
-
+    console.log(task)
     res.status(200).send('success');
   }
 
   async update(req, res, next) {
     try{
       const { refreshToken } = req.cookies;
-      const { task_name } = req.body;
+      const { task } = req.body;
       const { id, task_id } = req.params;
-      if(!refreshToken || !task_id || !task_name || !id) return res.status(400).send('BadRequestError')
+      if(!refreshToken || !task_id || !task || !id) return res.status(400).send('BadRequestError')
 
       const token = await tokenService.findToken(refreshToken);
-      if(!token) return res.status(401).send('unavthorized')
+      if(!token) return res.status(401).send('unavthorized');
       const permission = await projectService.checkPermission(id, token.user,'u');
       if(!permission) return res.status(403).send('you are not allowed this action');
 
-      const updatedProject = await TaskService.update( task_id, task_name);
+      const updatedProject = await TaskService.update( task_id, task);
 
       if(!updatedProject) {
         res.send("something went wrong! Check your requests and try again");
@@ -111,12 +110,12 @@ class TaskController {
 
       const token = await tokenService.findToken(refreshToken);
       if(!token) return res.status(401).send('unavthorized')
-
+ 
       const permission = await projectService.checkPermission(id, token.user,'d');
       if(!permission) return res.status(403).send('you are not allowed this action');
 
       await TaskService.delete(task_id);
-      return res.status(204).send('project deleted successfully');
+      return res.status(201).send('task deleted successfully');
     }
     catch(err) {
       console.log(err);
@@ -139,7 +138,7 @@ class TaskController {
 
       await SubtaskService.create(task_id, subtask)
 
-      return res.status(201).send('subtask added successfully');
+      return res.status(200).send('subtask added successfully');
     }
     catch(err) {
       console.error(err);

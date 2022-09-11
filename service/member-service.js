@@ -11,12 +11,13 @@ const adminRequest = {
 class memberService{
   async newMember(email, project_id, role, request) {
     const user = await UserService.getUser(email);
-
+    if(!user) return;
+    const findUser = await this.findMember(project_id, user.id)
+    if(findUser) return 'user added to project already'
     if(role == 'admin') {
       request = adminRequest
     }
-
-    const member = await MemberModel.create({User:user.id,Project:project_id ,role:role,request:request});
+    const member = await MemberModel.create({User:user.id,name:user.name,Project:project_id ,role:role,request:request});
     MemberModel.findOne(member._id).
     populate('User').
     populate('Project').
@@ -25,31 +26,17 @@ class memberService{
     });
     return member;
   }
-
+ 
   async projectMembership(project_id) {
     const members = await MemberModel.find({Project: project_id});
-    let users = []
-    for(let member of members) {
-      let user = await UserService.getUserById(member.User);
-      users.push({user: user,member:member})
-    }
-    // members.map(async member=>{
-    //   let user = await UserService.getUserById(member.User);
-      // member = Object.assign(member, {user_name: user.name});
-      // let name = {name:user.name}
-      // member = {...member, ...name}
-      // console.log(member);
-    //   return {member:member,user:user};
-    // })
-    console.log(users)
-    return users
+    return members
   }
 
   async getUser(member_id) {
     const member = await MemberModel.findById(member_id);
     if(!member) return ;
-    const  user = await UserService.getUserById(member.User)
-    return {user:user,member:member};
+    // const  user = await UserService.getUserById(member.User);
+    return member;
   }
 
   async findMember(project_id, user_id) {

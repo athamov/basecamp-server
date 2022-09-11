@@ -49,8 +49,8 @@ class ProjectController {
     const token = await tokenService.findToken(refreshToken);
     if(!token) return res.status(401).send('unavthorized')
 
-    const permission = await projectService.checkPermission(id, token.user,'r');
-    if(!permission) return res.status(403).send('you are not allowed this action');
+    // const permission = await projectService.checkPermission(id, token.user,'r');
+    // if(!permission) return res.status(403).send('you are not allowed this action');
     const project = await projectService.findProject(id);
 
     if(!project) {
@@ -116,7 +116,7 @@ class ProjectController {
       const { refreshToken } = req.cookies;
       const { id } = req.params;
       const { email , role, request } = req.body;
-      if(!refreshToken || !email || !role || !request || !id) return res.status(400).send('BadRequestError')
+      if(!refreshToken || !email || role==undefined || !request || !id) return res.status(400).send('BadRequestError')
 
       const token = await tokenService.findToken(refreshToken);
       if(!token) return res.status(401).send('unavthorized')
@@ -124,8 +124,9 @@ class ProjectController {
       const permission = await projectService.checkPermission(id, token.user,'a');
       if(!permission) return res.status(403).send('you are not allowed this action');
 
-      await memberService.newMember(email, id, role, request)
-
+      const member = await memberService.newMember(email, id, role, request)
+      if(!member) return res.status(200).send('user not found');
+      
       return res.status(201).send('member added successfully');
     }
     catch(err) {
@@ -142,8 +143,8 @@ class ProjectController {
       const token = await tokenService.findToken(refreshToken);
       if(!token) return res.status(401).send('unavthorized');
 
-      const permission = await projectService.checkPermission(id, token.user,'r');
-      if(!permission) return res.status(403).send('you are not allowed this action');
+      // const permission = await projectService.checkPermission(id, token.user,'r');
+      // if(!permission) return res.status(403).send('you are not allowed this action');
 
       const membersData = await memberService.projectMembership(id);
       if(!membersData) return res.status(203).send('this project has not any member');
@@ -167,7 +168,6 @@ class ProjectController {
       if(!permission) return res.status(403).send('you are not allowed this action');
 
       const memberData = await memberService.getUser(member_id);
-      console.log(memberData);
       if(!memberData) return res.status(204).send('Member not found');
 
       return res.status(200).json(memberData);
@@ -189,9 +189,11 @@ class ProjectController {
       const permission = await projectService.checkPermission(id, token.user,'a');
       if(!permission) return res.status(403).send('you are not allowed this action');
 
+      const clientMemberData = await memberService.findMember(id,token.user);
+      if(clientMemberData.User == token.user) return res.status(403).send('you can not change own requests')
       await memberService.updateMember(member_id, role, request);
 
-      return res.status(200).send('updated successfully');
+      return res.status(200).send('updated successfully'); 
     }
     catch(err) {
       console.error(err);
@@ -199,7 +201,7 @@ class ProjectController {
   }
 
   async deleteMember(req, res, next) {
-    try {
+    try { 
       const { refreshToken } = req.cookies
       const { id, member_id } = req.params
 

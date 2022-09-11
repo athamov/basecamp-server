@@ -109,7 +109,7 @@ class UserService {
 
   async getUser(email) {
     const user = await UserModel.findOne({email});
-    
+    if(!user) return;
     return {email:user.email,name:user.name,id:user.id};
   }
 

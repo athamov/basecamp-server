@@ -4,25 +4,26 @@ var fs = require('fs');
 
 class FileController {
     async postFile (req, res) {
-        let filename = req.files.file.name;
+        console.log("req")
+        // let filename = req.files.file.name;
+        return res.send("good");
+        // var gridfsbucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+        //     chunkSizeBytes: 1024,
+        //     bucketName: 'filesBucket'
+        // });
       
-        var gridfsbucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
-            chunkSizeBytes: 1024,
-            bucketName: 'filesBucket'
-        });
-      
-        streamifier.createReadStream(req.files.file.data).
-            pipe(gridfsbucket.openUploadStream(filename)).
-            on('error', function (error) {
-                assert.ifError(error);
-            }).
-            on('finish', function () {
-                console.log('done!');
-                res.status(200).json({
-                    success: true,
-                    msg: 'File Uploaded successfully..'
-                });
-            });
+        // streamifier.createReadStream(req.files.file.data).
+        //     pipe(gridfsbucket.openUploadStream(filename)).
+        //     on('error', function (error) {
+        //         assert.ifError(error);
+        //     }).
+        //     on('finish', function () {
+        //         console.log('done!');
+        //         res.status(200).json({
+        //             success: true,
+        //             msg: 'File Uploaded successfully..'
+        //         });
+        //     });
     }
 
     async getFIle(req, res) {

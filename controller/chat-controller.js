@@ -101,7 +101,7 @@ class ChatController {
       if(!permission) return res.status(403).send('you are not allowed this action');
 
       await ChatService.delete(chat_id);
-      return res.status(200).send('project deleted successfully');
+      return res.status(200).send('deleted successfully');
     }
     catch(err) {
       console.log(err);
@@ -118,8 +118,8 @@ class ChatController {
 
       const token = await tokenService.findToken(refreshToken);
       if(!token) return res.status(401).send('unavthorized')
-
-      const permission = await projectService.checkPermission(id, token.user,'a');
+ 
+      const permission = await projectService.checkPermission(id, token.user,'w');
       if(!permission) return res.status(403).send('you are not allowed this action');
       const user = await UserService.getUserById(token.user);
       await MessageService.create(chat_id, message,user.name);
@@ -136,14 +136,14 @@ class ChatController {
       const { refreshToken } = req.cookies;
       const { chat_id, id } = req.params;
       if(!refreshToken || !id || !chat_id) return res.status(400).send('BadRequestError')
-
+      console.log(chat_id)
       const token = await tokenService.findToken(refreshToken);
       if(!token) return res.status(401).send('unavthorized');
 
-      const subtask = await MessageService.getAll(chat_id);
-      if(!chat_id) return res.status(203).send('this task has not any subtask');
+      const messages = await MessageService.getAll(chat_id);
+      if(!chat_id) return res.status(203).send('this chat has not any messages');
 
-      return res.status(200).json(subtask);
+      return res.status(200).json(messages);
     }
     catch(err) {
       console.error(err);

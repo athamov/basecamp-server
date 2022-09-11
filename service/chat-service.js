@@ -9,16 +9,7 @@ class ChatService {
 
   async getAll(project_id) {
     const allChats = await ChatModel.find({Project:project_id});
-    // console.log(allChats)
-    let chats = []
-    for(let chat of allChats) {
-      let messages = await MessageModel.find({Chat:chat._id});
-      // console.log(chat);
-      chats.push({chat:chat,messages:messages})
-      console.log(chats)
-    };
-    // console.log(chats);
-    return chats;
+    return allChats;
   }
 
   async find(chat_id) {

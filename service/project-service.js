@@ -1,11 +1,13 @@
 const memberService = require('./member-service');
 const ProjectModel = require('../models/project-model');
+const userService = require('./user-service');
 const Apierror = require('../exceptions/api-error');
 
 class ProjectService {
   async createProject( id, project_name, project_description ) {
     const project = await ProjectModel.create({project_name: project_name, description: project_description});
-    await memberService.newMember(id, project._id, 'admin');
+    const user = await userService.getUserById(id);
+    await memberService.newMember(user.email, project._id, 'admin'); 
 
     return project;
   }

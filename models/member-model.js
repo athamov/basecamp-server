@@ -3,7 +3,8 @@ const {Schema, model } = require('mongoose');
 const MemberSchema = new Schema({
   User:{type: Schema.Types.ObjectId, ref: 'User'},
   Project: {type: Schema.Types.ObjectId, ref: 'Project'},
-  role:{type:String,enum:['admin','user']},
+  role:{type:String,enum:['admin','user','creator']},
+  name:{type:String,required: true},
   request: {
     Update:{type:Boolean,required:true},
     Delete:{type:Boolean,required:true},
