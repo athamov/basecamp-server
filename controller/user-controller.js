@@ -62,6 +62,7 @@ class UserController {
   async refresh(req, res, next) {
     try {
       const {refreshToken} = req.cookies;
+      if(refreshToken) return res.send('refreshToken is not available')
       const userData = await userService.refreshToken(refreshToken);
       res.cookie('refreshToken',userData.token.refreshToken,{maxAge:2592000000,httpOnly:true})
       return res.json(userData);
