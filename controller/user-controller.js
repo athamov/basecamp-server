@@ -12,7 +12,7 @@ class UserController {
       }
       const {email, password, name} = req.body;
       const userData = await userService.registration(email, password, name);
-      res.cookie('refreshToken',userData.token.refreshToken,{maxAge:2592000000,httpOnly:false})
+      res.cookie('refreshToken',userData.token.refreshToken,{maxAge:2592000000,httpOnly:true})
       return res.json(userData);
     }
     catch (err) {
@@ -25,7 +25,7 @@ class UserController {
       const { email, password } = req.body;
       
       const userData = await userService.login(email, password);
-      res.cookie('refreshToken',userData.token.refreshToken,{maxAge:2592000000,httpOnly:false})
+      res.cookie('refreshToken',userData.token.refreshToken,{maxAge:2592000000,httpOnly:true})
       return res.json(userData);
     }
     catch (err) {
@@ -64,7 +64,7 @@ class UserController {
       const {refreshToken} = req.cookies;
       if(refreshToken) return res.send('refreshToken is not available');
       const userData = await userService.refreshToken(refreshToken);
-      res.cookie('refreshToken',userData.token.refreshToken,{maxAge:2592000000,httpOnly:false})
+      res.cookie('refreshToken',userData.token.refreshToken,{maxAge:2592000000,httpOnly:true})
       return res.json(userData);
     }
     catch (err) {
@@ -101,7 +101,7 @@ class UserController {
       const {refreshToken} = req.cookies;
       const { name, email, newPassword, oldPassword } = req.body;
       const userData = await userService.updateUser(refreshToken,name,email,newPassword,oldPassword);
-      res.cookie('refreshToken',userData.token.refreshToken,{maxAge:2592000000,httpOnly:false})
+      res.cookie('refreshToken',userData.token.refreshToken,{maxAge:2592000000,httpOnly:true})
 
       return res.json(userData)
     }
