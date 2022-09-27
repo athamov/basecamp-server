@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
   credentials: true,
-  origin:process.env.CLIENT_URL|'http:localhost:3000'
+  origin:"https://basecamp-client.netlify.app"|"http:localhost:3000"
 }));
 app.use('/api',router); 
 
