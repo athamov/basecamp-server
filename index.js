@@ -1,5 +1,5 @@
 require('dotenv').config();
-require('./setupProxy');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -13,12 +13,20 @@ const errorMiddleware = require('./middleware/error-middleware.js');
 
 const PORT = process.env.PORT || process.env.SERVER_PORT || 7000
 const app = express();
- 
+// app.use(
+//   '/api',
+//   createProxyMiddleware({
+//       target: 'http://localhost:3000',
+//       changeOrigin: true,
+//       AccessControlAllowOrigin:'*'
+//   })
+// );
 app.use(express.json());  
 app.use(cookieParser());
 app.use(cors({
   credentials: true,
-  origin:"https://basecamp-client.netlify.app"|"http:localhost:3000"
+  origin:'http://localhost:3000',
+  // AccessControlAllowOrigin:'*'
 }));
 app.use('/api',router); 
 
