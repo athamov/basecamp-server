@@ -1,4 +1,5 @@
 require('dotenv').config();
+require('./setupProxy');
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -7,7 +8,8 @@ const expressUploader = require('express-fileupload')
 var multer = require('multer');
 var upload = multer();
 const router = require('./router/index.js');
-const errorMiddleware = require('./middleware/error-middleware.js')
+const errorMiddleware = require('./middleware/error-middleware.js');
+
 
 const PORT = process.env.PORT || process.env.SERVER_PORT || 7000
 const app = express();
