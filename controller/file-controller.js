@@ -4,7 +4,6 @@ var fs = require('fs');
 
 class FileController {
     async postFile (req, res) {
-        console.log("req")
         // let filename = req.files.file.name;
         return res.send("good");
         // var gridfsbucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {

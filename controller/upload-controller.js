@@ -17,7 +17,8 @@ class Format64 {
 class UploadController {
   async create(req, res, next) {
     try {
-      const { refreshToken } = req.cookies;
+      const refreshToken = req.headers.authorization;
+
       const { id } = req.params;
       const { base64data,name } = req.body;
       if(!refreshToken || !base64data || !name || !id) return res.status(400).send('something went wrong');
@@ -38,7 +39,8 @@ class UploadController {
 
   async getAll(req, res, next) {
     try{
-      const { refreshToken } = req.cookies;
+      const refreshToken = req.headers.authorization;
+
       const { id } = req.params
       if(!refreshToken || !id) return res.status(400).send('BadRequestError')
 
@@ -86,7 +88,8 @@ class UploadController {
 
   async update(req, res, next) {
     try{
-      const { refreshToken } = req.cookies;
+      const refreshToken = req.headers.authorization;
+
       const { id, upload_id } = req.params;
       const { name } = req.body;
       if(!refreshToken || !upload_id || !name || !id) return res.status(400).send('BadRequestError')
@@ -110,7 +113,8 @@ class UploadController {
 
   async delete(req, res, next) {
     try{
-      const { refreshToken } = req.cookies;
+      const refreshToken = req.headers.authorization;
+
       const { id, upload_id } = req.params;
       if(!refreshToken || !id || !upload_id) return res.status(400).send('BadRequestError')
 

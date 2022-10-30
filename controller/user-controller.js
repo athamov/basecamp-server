@@ -23,7 +23,6 @@ class UserController {
   async login(req, res, next) {
     try {
       const { email, password } = req.body;
-      console.log(req);
       const userData = await userService.login(email, password);
       res.cookie('refreshToken',userData.token.refreshToken,{maxAge:2592000000,httpOnly:true})
       return res.json(userData);
@@ -36,7 +35,7 @@ class UserController {
 
   async logout(req, res, next) {
     try {
-      const {refreshToken} = req.cookies;
+      const refreshToken = req.headers.authorization;
       const token = await userService.logout(refreshToken);
       res.clearCookie('refreshToken');
       return res.json(token);
@@ -61,7 +60,7 @@ class UserController {
 
   async refresh(req, res, next) {
     try {
-      const {refreshToken} = req.cookies;
+      const refreshToken = req.headers.authorization;
       if(refreshToken) return res.send('refreshToken is not available');
       const userData = await userService.refreshToken(refreshToken);
       res.cookie('refreshToken',userData.token.refreshToken,{maxAge:2592000000,httpOnly:true})
@@ -84,7 +83,7 @@ class UserController {
 
   async sendUser(req, res, next) {
     try {
-      const {refreshToken} = req.cookies;
+      const refreshToken = req.headers.authorization;
 
       const token = await tokenService.findToken(refreshToken);
 
@@ -98,7 +97,7 @@ class UserController {
 
   async update(req, res, next) {
     try {
-      const {refreshToken} = req.cookies;
+      const refreshToken = req.headers.authorization;
       const { name, email, newPassword, oldPassword } = req.body;
       const userData = await userService.updateUser(refreshToken,name,email,newPassword,oldPassword);
       res.cookie('refreshToken',userData.token.refreshToken,{maxAge:2592000000,httpOnly:true})
@@ -112,7 +111,7 @@ class UserController {
 
   async delete(req, res, next) {
     try {
-      const {refreshToken} = req.cookies;
+      const refreshToken = req.headers.authorization;
       const {email, password} = req.body;
       await userService.delete(email,password ,refreshToken);
       res.clearCookie('refreshToken');

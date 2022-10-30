@@ -5,7 +5,7 @@ const tokenService = require('../service/token-service');
 class ProjectController {
   async create(req, res, next) {
     try {
-      const { refreshToken } = req.cookies
+      const refreshToken = req.headers.authorization;
       const { project_name, project_description } = req.body;
       if(!refreshToken || !project_name || !project_description) return res.status(400).send('something went wrong');
 
@@ -25,7 +25,7 @@ class ProjectController {
 
   async getAllProject(req, res, next) {
     try{
-      const { refreshToken } = req.headers.authorization;
+      const refreshToken = req.headers.authorization;
       if( !refreshToken ) return res.status(400).send('BadRequestError')
       console.log(refreshToken);
 
@@ -44,7 +44,7 @@ class ProjectController {
   }
 
   async getProject(req, res, next) {
-    const { refreshToken } = req.cookies; 
+    const refreshToken = req.headers.authorization;
     const { id } = req.params;
     if(!refreshToken || !id) res.status(400).send('something went wrong');
     const token = await tokenService.findToken(refreshToken);
@@ -63,7 +63,7 @@ class ProjectController {
 
   async updateProject(req, res, next) {
     try{
-      const { refreshToken } = req.cookies;
+      const refreshToken = req.headers.authorization;
       const { project_name, project_description } = req.body;
       const { id } = req.params;
       if(!refreshToken || !project_name || !project_description || !id) return res.status(400).send('BadRequestError')
@@ -91,7 +91,7 @@ class ProjectController {
 
   async deleteProject(req, res, next) {
     try{
-      const { refreshToken } = req.cookies;
+      const refreshToken = req.headers.authorization;
       const { id } = req.params;
       if(!refreshToken || !id) return res.status(400).send('BadRequestError')
 
@@ -114,7 +114,7 @@ class ProjectController {
 
   async addMember(req, res, next) {
     try {
-      const { refreshToken } = req.cookies;
+      const refreshToken = req.headers.authorization;
       const { id } = req.params;
       const { email , role, request } = req.body;
       if(!refreshToken || !email || role==undefined || !request || !id) return res.status(400).send('BadRequestError')
@@ -137,7 +137,7 @@ class ProjectController {
 
   async getAllMebers(req, res, next) {
     try {
-      const { refreshToken } = req.cookies;
+      const refreshToken = req.headers.authorization;
       const { id } = req.params;
       if(!refreshToken || !id) return res.status(400).send('BadRequestError')
 
@@ -159,7 +159,7 @@ class ProjectController {
 
   async getMember(req, res, next) {
     try {
-      const { refreshToken } = req.cookies
+      const refreshToken = req.headers.authorization;
       const { id, member_id } = req.params
       if(!refreshToken || !member_id || !id) return res.status(400).send('BadRequestError')
       const token = await tokenService.findToken(refreshToken);
@@ -180,7 +180,7 @@ class ProjectController {
 
   async updateMember(req, res, next) {
     try {
-      const { refreshToken } = req.cookies;
+      const refreshToken = req.headers.authorization;
       const { id, member_id} = req.params;
       const { role, request } = req.body;
 
@@ -203,7 +203,7 @@ class ProjectController {
 
   async deleteMember(req, res, next) {
     try { 
-      const { refreshToken } = req.cookies
+      const refreshToken = req.headers.authorization;
       const { id, member_id } = req.params
 
       const token = await tokenService.findToken(refreshToken);

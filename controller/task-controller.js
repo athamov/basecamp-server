@@ -6,7 +6,8 @@ const SubtaskService = require('../service/subtask-service');
 class TaskController {
   async create(req, res, next) {
     try {
-      const { refreshToken } = req.cookies;
+      const refreshToken = req.headers.authorization;
+
       const { id } = req.params;
       const { task } = req.body;
       if(!refreshToken || !task || !id) return res.status(400).send('something went wrong');
@@ -26,7 +27,8 @@ class TaskController {
 
   async getAll(req, res, next) {
     try{
-      const { refreshToken } = req.cookies;
+      const refreshToken = req.headers.authorization;
+
       const { id } = req.params;
       if(!refreshToken || !id) return res.status(400).send('BadRequestError')
 
@@ -45,7 +47,8 @@ class TaskController {
   }
 
   async find(req, res, next) {
-    const { refreshToken } = req.cookies; 
+    const refreshToken = req.headers.authorization;
+
     const { id,task_id } = req.params;
     if(!refreshToken || !id || !task_id) res.status(400).send('something went wrong');
     const token = await tokenService.findToken(refreshToken);
@@ -63,7 +66,8 @@ class TaskController {
   }
 
   async ChangeIsDone(req, res) {
-    const { refreshToken } = req.cookies;
+    const refreshToken = req.headers.authorization;
+
     const { id,task_id } = req.params;
     if(!refreshToken || !id || !task_id) return res.status(400).send('BadRequestError')
     // console.log("something");
@@ -74,13 +78,13 @@ class TaskController {
 
     const task = await TaskService.changeIsDone(task_id);
     if(task=='err') res.send(500).send('something went wrong with is done function');
-    console.log(task)
     res.status(200).send('success');
   }
 
   async update(req, res, next) {
     try{
-      const { refreshToken } = req.cookies;
+      const refreshToken = req.headers.authorization;
+
       const { task } = req.body;
       const { id, task_id } = req.params;
       if(!refreshToken || !task_id || !task || !id) return res.status(400).send('BadRequestError')
@@ -104,7 +108,8 @@ class TaskController {
 
   async delete(req, res, next) {
     try{
-      const { refreshToken } = req.cookies;
+      const refreshToken = req.headers.authorization;
+
       const { id, task_id } = req.params;
       if(!refreshToken || !id || !task_id) return res.status(400).send('BadRequestError')
 
@@ -125,7 +130,8 @@ class TaskController {
 
   async addSubtask(req, res, next) {
     try {
-      const { refreshToken } = req.cookies;
+      const refreshToken = req.headers.authorization;
+
       const { id, task_id } = req.params;
       const { subtask } = req.body;
       if(!refreshToken || !task_id || !subtask || !id) return res.status(400).send('BadRequestError')
@@ -147,7 +153,8 @@ class TaskController {
 
   async getAllSubtasks(req, res, next) {
     try {
-      const { refreshToken } = req.cookies;
+      const refreshToken = req.headers.authorization;
+
       const { id, task_id } = req.params;
       if(!refreshToken || !id || !task_id) return res.status(400).send('BadRequestError')
 
@@ -166,7 +173,8 @@ class TaskController {
 
   async getSubtask(req, res, next) {
     try {
-      const { refreshToken } = req.cookies
+      const refreshToken = req.headers.authorization;
+
       const { id, subtask_id } = req.params;
       if(!refreshToken || !subtask_id || !id) return res.status(400).send('BadRequestError')
       const token = await tokenService.findToken(refreshToken);
@@ -186,7 +194,8 @@ class TaskController {
   }
 
   async ChangeSubIsDone(req, res) {
-    const { refreshToken } = req.cookies;
+    const refreshToken = req.headers.authorization;
+
     const { id, subtask_id } = req.params;
     if(!refreshToken || !id || !subtask_id) return res.status(400).send('BadRequestError')
     
@@ -203,7 +212,8 @@ class TaskController {
 
   async updateSubtask(req, res, next) {
     try{
-      const { refreshToken } = req.cookies;
+      const refreshToken = req.headers.authorization;
+
       const { subtask } = req.body;
       const { id, subtask_id } = req.params;
       if(!refreshToken || !subtask_id || !subtask || !id) return res.status(400).send('BadRequestError')
@@ -227,7 +237,8 @@ class TaskController {
 
   async deleteSubtask(req, res, next) {
     try {
-      const { refreshToken } = req.cookies
+      const refreshToken = req.headers.authorization;
+
       const { id, subtask_id } = req.params
       if(!refreshToken || !subtask_id || !id) return res.status(400).send('BadRequestError');
 

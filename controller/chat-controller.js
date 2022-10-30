@@ -7,7 +7,7 @@ const UserService = require('../service/user-service');
 class ChatController {
   async create(req, res, next) {
     try {
-      const { refreshToken } = req.cookies;
+      const refreshToken = req.headers.authorization;
       const { id } = req.params;
       const { name } = req.body;
       if(!refreshToken || !name || !id) return res.status(400).send('something went wrong');
@@ -27,7 +27,8 @@ class ChatController {
 
   async getAll(req, res, next) {
     try{
-      const { refreshToken } = req.cookies;
+      const refreshToken = req.headers.authorization;
+
       const { id } = req.params
       if(!refreshToken || !id) return res.status(400).send('BadRequestError')
 
@@ -46,7 +47,8 @@ class ChatController {
   }
 
   async find(req, res, next) {
-    const { refreshToken } = req.cookies; 
+    const refreshToken = req.headers.authorization;
+
     const { id, chat_id } = req.params;
     if(!refreshToken || !id || !chat_id) res.status(400).send('something went wrong');
 
@@ -66,7 +68,8 @@ class ChatController {
 
   async update(req, res, next) {
     try{
-      const { refreshToken } = req.cookies;
+      const refreshToken = req.headers.authorization;
+
       const { id, chat_id } = req.params;
       const { name } = req.body;
       if(!refreshToken || !chat_id || !name || !id) return res.status(400).send('BadRequestError')
@@ -90,7 +93,8 @@ class ChatController {
 
   async delete(req, res, next) {
     try{
-      const { refreshToken } = req.cookies;
+      const refreshToken = req.headers.authorization;
+
       const { id, chat_id } = req.params;
       if(!refreshToken || !id || !chat_id) return res.status(400).send('BadRequestError')
 
@@ -111,7 +115,8 @@ class ChatController {
 
   async addMessage(req, res, next) {
     try {
-      const { refreshToken } = req.cookies;
+      const refreshToken = req.headers.authorization;
+
       const { chat_id ,id } = req.params;
       const { message } = req.body;
       if(!refreshToken || !chat_id || !message || !id) return res.status(400).send('BadRequestError')
@@ -133,10 +138,10 @@ class ChatController {
 
   async getAllMessages(req, res, next) {
     try {
-      const { refreshToken } = req.cookies;
+      const refreshToken = req.headers.authorization;
+
       const { chat_id, id } = req.params;
       if(!refreshToken || !id || !chat_id) return res.status(400).send('BadRequestError')
-      console.log(chat_id)
       const token = await tokenService.findToken(refreshToken);
       if(!token) return res.status(401).send('unavthorized');
 
@@ -152,7 +157,8 @@ class ChatController {
 
   async findMessage(req, res, next) {
     try {
-      const { refreshToken } = req.cookies
+      const refreshToken = req.headers.authorization;
+
       const { message_id,id } = req.params;
       if(!refreshToken || !message_id || !id) return res.status(400).send('BadRequestError')
       const token = await tokenService.findToken(refreshToken);
@@ -173,7 +179,8 @@ class ChatController {
 
   async updateSubtask(req, res, next) {
     try{
-      const { refreshToken } = req.cookies;
+      const refreshToken = req.headers.authorization;
+
       const { message_id, id } = req.params;
       const { message } = req.body;
       if(!refreshToken || !message_id || !message || !id) return res.status(400).send('BadRequestError')
@@ -197,7 +204,8 @@ class ChatController {
 
   async deleteMessage(req, res, next) {
     try {
-      const { refreshToken } = req.cookies
+      const refreshToken = req.headers.authorization;
+
       const { message_id, id } = req.params
       if(!refreshToken || !message_id || !id) return res.status(400).send('BadRequestError');
 
