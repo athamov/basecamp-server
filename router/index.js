@@ -12,7 +12,7 @@ const authMiddleware = require('../middleware/auth-middleware')
 
 const router = new Router(); 
 
-//! AuthMiddleware checks your header there must be 'Authorization':`Bearer ${user's accesToken}`
+//! AuthMiddleware checks your header there must be 'authorization':`Bearer ${user's accesToken}`
 
 // * Auth
 router.post('/registration',

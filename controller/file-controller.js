@@ -42,7 +42,6 @@ class FileController {
                 });
             }).
             on('finish', function () {
-                console.log('done!');
                 res.send('Downloaded successfully!')
             });
       }
