@@ -27,7 +27,6 @@ class ProjectController {
     try{
       const refreshToken = req.headers.authorization;
       if( !refreshToken ) return res.status(400).send('BadRequestError')
-      console.log(refreshToken);
 
       const token = await tokenService.findToken(refreshToken);
       if(!token) return res.status(401).send('unavthorized');

@@ -14,7 +14,7 @@ class ChatService {
 
   async find(chat_id) {
     const chat = await ChatModel.findById(chat_id);
-    const messages = await MessageModel.find({Chat:chat._id});
+    const messages = await MessageModel.find({Chat:chat_id});
     return {chat, messages:messages};
   }
 

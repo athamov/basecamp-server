@@ -167,10 +167,10 @@ class ChatController {
       const permission = await projectService.checkPermission(id, token.user,'r');
       if(!permission) return res.status(403).send('you are not allowed this action');
 
-      const subtask = await MessageService.find(message_id);
-      if(!subtask) return res.status(204).send('Member not found');
+      const message = await MessageService.find(message_id);
+      if(!message) return res.status(204).send('Member not found');
 
-      return res.status(200).json(subtask);
+      return res.status(200).json(message);
     }
     catch(err) {
       console.error(err);
