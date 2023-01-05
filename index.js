@@ -9,43 +9,27 @@ var multer = require('multer');
 var upload = multer();
 const router = require('./router/index.js');
 const errorMiddleware = require('./middleware/error-middleware.js');
+const { baseModelName } = require('./models/user-model.js');
 
 
-const PORT = process.env.PORT || process.env.SERVER_PORT || 7000
+const PORT = process.env.PORT || process.env.SERVER_PORT || 7000;
 const app = express();
-app.use(
-  '/api',
-  createProxyMiddleware({
-      target: 'http://localhost:3000',
-      changeOrigin: true,
-      AccessControlAllowOrigin:'*'
-  })
-);
+// app.use(
+//   '/api',
+//   createProxyMiddleware({
+//       target: process.env.CLIENT_URL,
+//       changeOrigin: true,
+//       AccessControlAllowOrigin:'*'
+//   })
+// );
 app.use(express.json());  
-app.use(cookieParser());
+// app.use(cookieParser());
 app.use(cors({
   credentials: true,
-  origin:process.env.CLIENT_URL,
-  // AccessControlAllowOrigin:'*'
+  origin: true,
+  optionsSuccessStatus:200,
 }));
-app.use(function (req, res, next) {
 
-  // Website you wish to allow to connect
-  res.setHeader('Access-Control-Allow-Origin', process.env.CLIENT_URL);
-
-  // Request methods you wish to allow
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-  // Request headers you wish to allow
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-
-  // Set to true if you need the website to include cookies in the requests sent
-  // to the API (e.g. in case you use sessions)
-  res.setHeader('Access-Control-Allow-Credentials', true);
-
-  // Pass to next layer of middleware
-  next();
-});
 
 app.use('/api',router); 
 
@@ -64,6 +48,6 @@ const start = async () => {
   catch (err) {
     console.log(err)
   }
-} 
+};
 
-start()
+start();
