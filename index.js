@@ -13,14 +13,14 @@ const errorMiddleware = require('./middleware/error-middleware.js');
 
 const PORT = process.env.PORT || process.env.SERVER_PORT || 7000
 const app = express();
-// app.use(
-//   '/api',
-//   createProxyMiddleware({
-//       target: 'http://localhost:3000',
-//       changeOrigin: true,
-//       AccessControlAllowOrigin:'*'
-//   })
-// );
+app.use(
+  '/api',
+  createProxyMiddleware({
+      target: 'http://localhost:3000',
+      changeOrigin: true,
+      AccessControlAllowOrigin:'*'
+  })
+);
 app.use(express.json());  
 app.use(cookieParser());
 app.use(cors({
@@ -31,7 +31,7 @@ app.use(cors({
 app.use(function (req, res, next) {
 
   // Website you wish to allow to connect
-  // res.setHeader('Access-Control-Allow-Origin', process.env.CLIENT_URL);
+  res.setHeader('Access-Control-Allow-Origin', process.env.CLIENT_URL);
 
   // Request methods you wish to allow
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
