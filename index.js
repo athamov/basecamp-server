@@ -17,7 +17,7 @@ const PORT = process.env.PORT || process.env.SERVER_PORT || 7000;
 const app = express();
 app.use(cors({
   credentials: true,
-  origin: true,
+  origin: process.env.CLIENT_URL,
   optionsSuccessStatus:200,
 }));
 // app.use(
@@ -34,7 +34,7 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-app.use('/api',router); 
+app.use('/api',router,()=>res.header("Access-Control-Allow-Origin", "*")); 
 
 app.use(errorMiddleware);
 // app.use(expressUploader)
