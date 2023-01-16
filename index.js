@@ -4,7 +4,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-// const cookieParser = require('cookie-parser');
+const cookieParser = require('cookie-parser');
 // const expressUploader = require('express-fileupload')
 // var multer = require('multer');
 // var upload = multer();
@@ -25,7 +25,7 @@ const app = express();
 //   })
 // );
 app.use(express.json());  
-// app.use(cookieParser());
+app.use(cookieParser());
 app.use(cors({
   credentials: true,
   origin: true,
