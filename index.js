@@ -1,19 +1,21 @@
 require('dotenv').config();
-const { createProxyMiddleware } = require('http-proxy-middleware');
+// const { createProxyMiddleware } = require('http-proxy-middleware');
 const express = require('express');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 const cors = require('cors');
-const cookieParser = require('cookie-parser');
-const expressUploader = require('express-fileupload')
-var multer = require('multer');
-var upload = multer();
+// const cookieParser = require('cookie-parser');
+// const expressUploader = require('express-fileupload')
+// var multer = require('multer');
+// var upload = multer();
 const router = require('./router/index.js');
 const errorMiddleware = require('./middleware/error-middleware.js');
-const { baseModelName } = require('./models/user-model.js');
+// const { baseModelName } = require('./models/user-model.js');
 
 
 const PORT = process.env.PORT || process.env.SERVER_PORT || 7000;
 const app = express();
+
 // app.use(
 //   '/api',
 //   createProxyMiddleware({
@@ -29,7 +31,8 @@ app.use(cors({
   origin: true,
   optionsSuccessStatus:200,
 }));
-
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
 
 app.use('/api',router); 
 
