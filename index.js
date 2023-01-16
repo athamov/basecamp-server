@@ -15,7 +15,11 @@ const errorMiddleware = require('./middleware/error-middleware.js');
 
 const PORT = process.env.PORT || process.env.SERVER_PORT || 7000;
 const app = express();
-
+app.use(cors({
+  credentials: true,
+  origin: true,
+  optionsSuccessStatus:200,
+}));
 // app.use(
 //   '/api',
 //   createProxyMiddleware({
@@ -24,13 +28,9 @@ const app = express();
 //       AccessControlAllowOrigin:'*'
 //   })
 // );
-app.use(express.json());  
+app.use(express.json());
 app.use(cookieParser());
-app.use(cors({
-  credentials: true,
-  origin: true,
-  optionsSuccessStatus:200,
-}));
+
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
@@ -45,7 +45,7 @@ const start = async () => {
     await mongoose.connect(process.env.DB_URL,{ 
       useNewUrlParser: true 
     })     
-    app.listen(PORT,console.log("server has been started in ",PORT));
+    await app.listen(PORT,console.log("server has been started in ",PORT));
     console.log("mongodb status: " + mongoose.connection.readyState);
   }
   catch (err) {
